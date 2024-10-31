@@ -54,7 +54,7 @@ export const StateContextProvider = ({ children }) => {
 
       if (accounts.length) {
         setAddress(accounts[0]);
-        const provider = new ethers.providers.Web3Provider(connection);
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
         const getbalance = await provider.getBalance(accounts[0]);
         const bal = ethers.utils.formatEther(getbalance);
         setAccountBalance(bal);
@@ -78,7 +78,7 @@ export const StateContextProvider = ({ children }) => {
 
       if (accounts.length) {
         setAddress(accounts[0]);
-        const provider = new ethers.providers.Web3Provider(connection);
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
         const getbalance = await provider.getBalance(accounts[0]);
         const bal = ethers.utils.formatEther(getbalance);
         setAccountBalance(bal);
@@ -262,6 +262,8 @@ export const StateContextProvider = ({ children }) => {
     try {
       setLoader(true);
       notifySuccess("purchasing token");
+
+      if (!tokenQuentity || !tokenAddress) return notifyError("Data Missing");
 
       const address = await connectWallet();
       const contract= await ICO_MARKETPLACE_CONTRACT();
