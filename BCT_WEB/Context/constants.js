@@ -69,7 +69,7 @@ const networks = {
     rpcUrls: ["https://rpc.ankr.com/bsc"],
     blockExplorerUrls: ["https://bscscan.com/"],
   },
-  bsc: {
+  base_mainnet: {
     chainId: `0x${Number(8453).toString(16)}`,
 
     chainName: "Base Mainnet",
@@ -95,7 +95,7 @@ const changeNetwork = async ({ networkName }) => {
 
       params: [
         {
-          ...networkName[networkName],
+          ...networks[networkName],
         },
       ],
     });
@@ -109,7 +109,8 @@ export const handleNetworkSwitch = async () => {
   await changeNetwork({ networkName });
 };
 
-export const shortenAddress = (address) =>  `${address?.slice(0, 5)}...${address?.length - 4}`;
+export const shortenAddress = (address) =>
+    `${address?.slice(0, 5)}...${address?.slice(address.length - 4)}`;
 
 //CONTRACT
 
