@@ -78,7 +78,7 @@ export const StateContextProvider = ({ children }) => {
 
       if (accounts.length) {
         setAddress(accounts[0]);
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const provider = new ethers.providers.Web3Provider(connection);
         const getbalance = await provider.getBalance(accounts[0]);
         const bal = ethers.utils.formatEther(getbalance);
         setAccountBalance(bal);
@@ -211,15 +211,81 @@ export const StateContextProvider = ({ children }) => {
   };
   const GET_ALL_ICOSALE_TOKEN = async () => {
     try {
+      setLoader(true);
+
+      const address = await connectWallet();
+
+      const contract = await ICO_MARKETPLACE_CONTRACT();
+
+      if (address) {
+        const allICOSaleToken = await contract.getAllTokens();
+
+        const _tokenArray = Promise.all(
+          allICOSaleToken.map(async (token) => {
+            const tokenContract = await TOKEN_CONTRACT(token?.token);
+
+            const balance = await tokenContract.balanceOf(
+              ICO_MARKETPLACE_ADDRESS
+            );
+
+            return {
+              creator: token.creator,
+              token: token.token,
+              name: token.name,
+              symbol: token.symbol,
+              supported: token.supported,
+              price: ethers.utils.formatEther(token?.prive.toString()),
+              icoSaleBal: ethers.utils.formatEther(balance.toString()),
+            };
+          })
+        );
+
+        setLoader(false);
+        return _tokenArray;
+      }
       // ...
     } catch (error) {
+      notifyError("kuch toh gadbad hai daya");
       console.log(error);
     }
   };
   const GET_ALL_USER_ICOSALE_TOKEN = async () => {
     try {
+      setLoader(true);
+
+      const address = await connectWallet();
+
+      const contract = await ICO_MARKETPLACE_CONTRACT();
+
+      if (address) {
+        const allICOSaleToken = await contract.getTokenCreatedBy(address);
+
+        const _tokenArray = Promise.all(
+          allICOSaleToken.map(async (token) => {
+            const tokenContract = await TOKEN_CONTRACT(token?.token);
+
+            const balance = await tokenContract.balanceOf(
+              ICO_MARKETPLACE_ADDRESS
+            );
+
+            return {
+              creator: token.creator,
+              token: token.token,
+              name: token.name,
+              symbol: token.symbol,
+              supported: token.supported,
+              price: ethers.utils.formatEther(token?.prive.toString()),
+              icoSaleBal: ethers.utils.formatEther(balance.toString()),
+            };
+          })
+        );
+
+        setLoader(false);
+        return _tokenArray;
+      }
       // ...
     } catch (error) {
+      notifyError("kuch toh gadbad hai daya");
       console.log(error);
     }
   };
@@ -234,8 +300,8 @@ export const StateContextProvider = ({ children }) => {
 
       const contract = await ICO_MARKETPLACE_CONTRACT();
 
-      constpayAmount = ethers.utils.parseUnits(price.toString(), "ethers");
-      constransaction = await contract.createICOSale(address, payAmount, {
+      const payAmount = ethers.utils.parseUnits(price.toString(), "ether");
+      const transaction = await contract.createICOSale(address, payAmount, {
         gasLimit: ethers.utils.hexlify(8000000),
       });
 
@@ -258,62 +324,143 @@ export const StateContextProvider = ({ children }) => {
       console.log(error);
     }
   };
-  const buyToken = async (tokenAddress,tokenQuentity) => {
+  const buyToken = async (tokenAddress, tokenQuentity) => {
     try {
       setLoader(true);
       notifySuccess("purchasing token");
 
-      if (!tokenQuentity || !tokenAddress) return notifyError("Data Missing");
-
       const address = await connectWallet();
-      const contract= await ICO_MARKETPLACE_CONTRACT();
+      const contract = await ICO_MARKETPLACE_CONTRACT();
 
       const _tokenbal = await contract.getBalance(tokenAddress);
       const _tokendetails = await contract.getTokenDetails(tokenAddress);
 
       const availableToken = ethers.utils.formatEther(_tokenbal.toString());
 
-      if(availableToken > 0)
-      {
-        const price =ethers.utils.formatEther(_tokenbal.toString()) * Number(tokenQuentity);
+      if (availableToken > 0) {
+        const price =
+          ethers.utils.formatEther(_tokenbal.toString()) *
+          Number(tokenQuentity);
 
-        const payAmount=ethers.utils.parseUnits(price.toString(),"ether");
+        const payAmount = ethers.utils.parseUnits(price.toString(), "ether");
 
-        const transaction = await contract.buyToken(tokenAddress,
-          Number(tokenQuentity),{
-            value : payAmount.toString(),
-            gasLimit:ethers.utils.hexlify(8000000),
-          });
+        const transaction = await contract.buyToken(
+          tokenAddress,
+          Number(tokenQuentity),
+          {
+            value: payAmount.toString(),
+            gasLimit: ethers.utils.hexlify(8000000),
+          }
+        );
 
-          await transaction.wait();
-          setLoader(false);
-          setReCall(reCall + 1);
-          setOpenBuyToken(false);
-          notifySuccess("transaction completed");
-      }else {
+        await transaction.wait();
+        setLoader(false);
+        setReCall(reCall + 1);
+        setOpenBuyToken(false);
+        notifySuccess("transaction completed");
+      } else {
         setLoader(false);
         setOpenBuyToken(false);
         notifyError("something wrong");
       }
       // ...
     } catch (error) {
+      setLoader(false);
+      setOpenBuyToken(false);
+      notifyError("something wrong");
       console.log(error);
     }
   };
-  const transferToken = async () => {
+  const transferToken = async (transferTokenData) => {
     try {
+      if (
+        !transferTokenData.address ||
+        !transferTokenData.amount ||
+        !transferTokenData.tokenAdd
+      )
+        return notifyError("Data is Missing");
+
+      setLoader(true);
+      notifySuccess("transaction processing");
+      const address = await connectWallet();
+
+      const contract = await ICO_MARKETPLACE_CONTRACT();
+      const _avalibleBal = await contract.balanceOf(address);
+      const avalibleToken = ethers.utils.formatEther(_avalibleBal.toString());
+
+      if (avalibleToken > 1) {
+        const payAmount = ethers.utils.parseUnits(
+          transferTokenData.amount.toString(),
+
+          "ether"
+        );
+
+        const transaction = await contract.transfer(
+          transferTokenData.address,
+          payAmount,
+          {
+            gasLimit: ethers.utils.hexlify(8000000),
+          }
+        );
+        await transaction.wait();
+        setLoader(false);
+        setReCall(reCall + 1);
+        setOpenTransferToken(false);
+        notifySuccess("transaction completed");
+      } else {
+        await transaction.wait();
+        setLoader(false);
+        setReCall(reCall + 1);
+        setOpenTransferToken(false);
+        notifySuccess("ur balance is 0");
+      }
       // ...
     } catch (error) {
+      setLoader(false);
+      setReCall(reCall + 1);
+      setOpenTransferToken(false);
+      notifySuccess("ur balance is 0");
       console.log(error);
     }
   };
-  const withdrawToken = async () => {
+  const withdrawToken = async (withdrawQuentity) => {
     try {
+      if (!withdrawQuentity.amount || !withdrawQuentity.token)
+        return notifyError("Data is missing");
+
+      setLoader(true);
+      notifySuccess("Transaction is proccessing...");
+
+      const address = await connectWallet();
+      const contract = await ICO_MARKETPLACE_CONTRACT();
+
+      const payAmount = ethers.utils.parseUnits(
+        withdrawQuentity.amount.toString(),
+        "ether"
+      );
+      const transaction = await contract.withdrawToken(
+        withdrawQuentity.token,
+        payAmount,
+        {
+          gasLimit: ethers.utils.hexlify(8000000),
+        }
+      );
+      await transaction.wait();
+      setLoader(false);
+      setReCall(reCall + 1);
+      setOpenWidthdrawToken(false);
+      notifySuccess("transaction completed");
       // ...
     } catch (error) {
+      setLoader(false);
+      setReCall(reCall + 1);
+      setOpenWidthdrawToken(false);
+      notifySuccess("kuch toh gadbad hai daya");
       console.log(error);
     }
   };
 
   return <StateContext.Provider value={{}}>{children}</StateContext.Provider>;
 };
+
+export const useStateContext = () => useContext(StateContext);
