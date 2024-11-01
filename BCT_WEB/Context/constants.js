@@ -109,8 +109,7 @@ export const handleNetworkSwitch = async () => {
   await changeNetwork({ networkName });
 };
 
-export const shortenAddress = (address) =>
-    `${address?.slice(0, 5)}...${address?.slice(address.length - 4)}`;
+export const shortenAddress = (address) =>  `${address?.slice(0, 5)}...${address?.slice(address.length - 4)}`;
 
 //CONTRACT
 
