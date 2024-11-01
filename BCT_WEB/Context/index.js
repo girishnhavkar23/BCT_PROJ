@@ -54,7 +54,7 @@ export const StateContextProvider = ({ children }) => {
 
       if (accounts.length) {
         setAddress(accounts[0]);
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const provider = new ethers.providers.Web3Provider(connection);
         const getbalance = await provider.getBalance(accounts[0]);
         const bal = ethers.utils.formatEther(getbalance);
         setAccountBalance(bal);
@@ -234,7 +234,7 @@ export const StateContextProvider = ({ children }) => {
               name: token.name,
               symbol: token.symbol,
               supported: token.supported,
-              price: ethers.utils.formatEther(token?.prive.toString()),
+              price: ethers.utils.formatEther(token?.price.toString()),
               icoSaleBal: ethers.utils.formatEther(balance.toString()),
             };
           })
@@ -408,7 +408,7 @@ export const StateContextProvider = ({ children }) => {
         setOpenTransferToken(false);
         notifySuccess("transaction completed");
       } else {
-        await transaction.wait();
+        
         setLoader(false);
         setReCall(reCall + 1);
         setOpenTransferToken(false);
