@@ -1,8 +1,7 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 
-//Internal Import
-import { useStateContext} from '../Context/index';
+import { useStateContext } from "../Context/index";
 import Header from "../Components/Header";
 import Input from "../Components/Input";
 import Button from "../Components/Button";
@@ -21,9 +20,21 @@ import BuyToken from "../Components/BuyToken";
 import WidthdrawToken from "../Components/WidthdrawToken";
 import TokenTransfer from "../Components/TokenTransfer";
 
-
 const index = () => {
-  const { withdrawToken,transferToken,buyToken,CREATE_ICOSALE,GET_ALL_USER_ICOSALE_TOKEN,GET_ALL_ICOSALE_TOKEN,createERC20,connectWallet,PINATA_API_KEY,PINATA_SECRECT_KEY,ICO_MARKETPLACE_ADDRESS,openBuyToken,
+  const {
+    withdrawToken,
+    transferToken,
+    buyToken,
+    CREATE_ICOSALE,
+    GET_ALL_USER_ICOSALE_TOKEN,
+    GET_ALL_ICOSALE_TOKEN,
+    createERC20,
+    connectWallet,
+    PINATA_API_KEY,
+    PINATA_AIP_KEY,
+    PINATA_SECRECT_KEY,
+    ICO_MARKETPLACE_ADDRESS,
+    openBuyToken,
     setOpenBuyToken,
     openWidthdrawToken,
     setOpenWidthdrawToken,
@@ -39,22 +50,68 @@ const index = () => {
     loader,
     setLoader,
     currency,
-    shortenAddress} = useStateContext();
+    shortenAddress,
+  } = useStateContext();
 
-    const notifySuccess = (msg) => toast.success(msg, { duration: 200 });
-    const notifyError = (msg) => toast.error(msg, { duration: 200 });
+  const notifySuccess = (msg) => toast.success(msg, { duration: 200 });
 
-    const [allICOs, setAllICOs] = useState();
-    const [allUserIcos, setAllUserIcos] = useState();
+  const notifyError = (msg) => toast.error(msg, { duration: 200 });
 
-    //Component Open
+  const [allICOs, setAllICOs] = useState();
+  const [allUserIcos, setAllUserIcos] = useState();
 
-    const [openAllICOs, setOpenAllICOs] = useState(false);
-    const [openTokenHistory, setOpenTokenHistory] = useState(false);
-    const [openICOMarketplace, setOpenICOMarketplace] = useState(false);
-    
+  // COMPONENT OPEN
+  const [openAllICO, setOpenAllICO] = useState(false);
+  const [openTokenHistory, setOpenTokenHistory] = useState(false);
+  const [openICOMarketplace, setOpenICOMarketplace] = useState(false);
 
-  return <div>index</div>;
+  //BUY ICO TOKEN
+  const [buyIco, setBuyIco] = useState();
+
+  const copyAddress = () => {
+    navigator.clipboard.writeText(ICO_MARKETPLACE_ADDRESS);
+    notifySuccess("Copied successfully");
+  };
+
+  return (
+    <div>
+      <Header
+        accountBalance={accountBalance}
+        setAddress={setAddress}
+        address={address}
+        connectWallet={connectWallet}
+        ICO_MARKETPLACE_ADDRESS={ICO_MARKETPLACE_ADDRESS}
+        shortenAddress={shortenAddress}
+        setOpenAllICO={setOpenAllICO}
+        openAllICO={openAllICO}
+        setOpenTokenCreator={setOpenTokenCreator}
+        openTokenCreator={openTokenCreator}
+        setOpenTokenHistory={setOpenTokenHistory}
+        openTokenHistory={openTokenHistory}
+        setOpenICOMarketplace={setOpenICOMarketplace}
+        openICOMarketplace={openICOMarketplace}
+      />
+      {openAllICO && <ICOMarket />}
+      {openTokenCreator && <TokenCreator createERC20={createERC20} shortenAddress={ shortenAddress} 
+      setOpenTokenCreator={setOpenTokenCreator}
+      setLoader={setLoader}
+      address={address}
+      connectWallet={connectWallet}
+      PINATA_AIP_KEY={PINATA_AIP_KEY}
+
+      PINATA_SECRECT_KEY={PINATA_SECRECT_KEY}
+      />}
+      {openTokenHistory && <TokenHistory />}
+      {openCreateICO && <CreateICO />}
+      {openICOMarketplace && <ICOMarket />}
+      {openBuyToken && <BuyToken />}
+      {openTransferToken && <TokenTransfer />}
+      {openWidthdrawToken && <WidthdrawToken />}
+
+      <Footer />
+      {loader && <Loader/> }
+    </div>
+  );
 };
 
 export default index;
