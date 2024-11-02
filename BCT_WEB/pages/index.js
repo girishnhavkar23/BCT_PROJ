@@ -101,7 +101,11 @@ const index = () => {
 
       PINATA_SECRECT_KEY={PINATA_SECRECT_KEY}
       />}
-      {openTokenHistory && <TokenHistory />}
+      {openTokenHistory && 
+      <TokenHistory 
+        shortenAddress = {shortenAddress}
+        setOpenTokenHistory= {setOpenTokenHistory}
+      />}
       {openCreateICO && <CreateICO />}
       {openICOMarketplace && <ICOMarket />}
       {openBuyToken && <BuyToken />}
