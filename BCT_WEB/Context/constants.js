@@ -17,7 +17,7 @@ export const ICO_MARKETPLACE_ABI = icoMarketplace.abi;
 
 //PINATA KEY
 
-export const PINATA_API_KEY = process.env.NEXT_PUBLIC_PINATA_AIP_KEY;
+export const PINATA_API_KEY = process.env.NEXT_PUBLIC_PINATA_API_KEY;
 
 export const PINATA_SECRECT_KEY = process.env.NEXT_PUBLIC_PINATA_SECRECT_KEY;
 
