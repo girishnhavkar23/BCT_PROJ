@@ -38,9 +38,9 @@ export const StateContextProvider = ({ children }) => {
 
   const [openCreateICO, setOpenCreateICO] = useState(false);
 
-  const notifySuccess = (msg) => toast.success(msg, { duration: 200 });
+  const notifySuccess = (msg) => toast.success(msg, { duration: 2000 });
 
-  const notifyError = (msg) => toast.error(msg, { duration: 200 });
+  const notifyError = (msg) => toast.error(msg, { duration: 2000 });
 
   // FUNCTIONS
 
