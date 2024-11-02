@@ -106,7 +106,15 @@ const index = () => {
         shortenAddress = {shortenAddress}
         setOpenTokenHistory= {setOpenTokenHistory}
       />}
-      {openCreateICO && <CreateICO />}
+      {openCreateICO && (
+        <CreateICO 
+          shortenAddress={shortenAddress} 
+          setOpenCreateICO={setOpenCreateICO} 
+          connectWallet={connectWallet} 
+          address={address}
+          createICOSale={createICOSale}
+        />
+      )}
       {openICOMarketplace && <ICOMarket />}
       {openBuyToken && <BuyToken />}
       {openTransferToken && <TokenTransfer />}
