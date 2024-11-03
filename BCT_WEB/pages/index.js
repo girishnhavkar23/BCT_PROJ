@@ -51,6 +51,7 @@ const index = () => {
     setLoader,
     currency,
     shortenAddress,
+    reCall
   } = useStateContext();
 
   const notifySuccess = (msg) => toast.success(msg, { duration: 200 });
@@ -72,6 +73,22 @@ const index = () => {
     navigator.clipboard.writeText(ICO_MARKETPLACE_ADDRESS);
     notifySuccess("Copied successfully");
   };
+
+  useEffect(
+    () => {
+      if (address) {
+        GET_ALL_USER_ICOSALE_TOKEN().then((token) => {
+          console.log("All", token);
+          setAllICOs(token);
+        });
+        GET_ALL_USER_ICOSALE_TOKEN().then((token) => {
+          console.log("User", token);
+          setAllUserIcos(token);
+        });
+      }
+    },
+    [address, reCall]
+  );
 
   return (
     <div>

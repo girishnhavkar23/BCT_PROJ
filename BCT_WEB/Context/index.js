@@ -481,7 +481,8 @@ export const StateContextProvider = ({ children }) => {
     loader,
     setLoader,
     currency,
-    shortenAddress
+    shortenAddress,
+    reCall
   }}>{children}</StateContext.Provider>;
 };
 
