@@ -132,7 +132,14 @@ const index = () => {
           createICOSale={createICOSale}
         />
       )}
-      {openICOMarketplace && <ICOMarket />}
+      {openICOMarketplace && (
+        <ICOMarket 
+          array={allUserIcos} 
+          shortenAddress={shortenAddress}
+          handleClick={setOpenICOMarketplace} 
+          currency={currency}
+      />
+      )}
       {openBuyToken && <BuyToken />}
       {openTransferToken && <TokenTransfer />}
       {openWidthdrawToken && <WidthdrawToken />}
