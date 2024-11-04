@@ -108,6 +108,18 @@ const index = () => {
         setOpenICOMarketplace={setOpenICOMarketplace}
         openICOMarketplace={openICOMarketplace}
       />
+      <div className="create">
+        <h1 style={{ fontSize: "2rem" }}>All ICOs Marketplace</h1>
+        {allICOs?.length != 0 && (
+          <Marketplace
+            array={allICOs}
+            shortenAddress={shortenAddress}
+            setBuyIco={setBuyIco}
+            setOpenBuyToken={setOpenBuyToken}
+            currency={currency}
+          />
+        )}
+      </div>
       {openAllICO && <ICOMarket />}
       {openTokenCreator && <TokenCreator createERC20={createERC20} shortenAddress={ shortenAddress} 
       setOpenTokenCreator={setOpenTokenCreator}
